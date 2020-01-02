@@ -2,12 +2,9 @@
 #define DATACENTERMANAGER_DATACENTERMANAGER_H
 
 #include "AVLtree.h"
-class DataCenter {
-public:
-    int id;
-    int size;
-    AVLtree<int, int> servers_by_traffic;
-};
+#include "UpTree.h"
+
+class DataCenter;
 
 class Server {
 public:
@@ -16,10 +13,22 @@ public:
     DataCenter *home;
 };
 
+class DataCenter {
+public:
+    int id;
+    int servers;
+    AVLtree<int, Server*> servers_by_traffic;
+    DataCenter *root;
+};
+
+
 class DataCenterManager {
 public:
-    DataCenter *farms;
-    Server *hush_Servers;
+    UpTree farms;
+    Hush_Table *hush_Servers;
+    AVLtree<int, Server*> all_servers_by_traffic;
+    int servers;
+
 
     void *Init();
 

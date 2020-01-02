@@ -86,6 +86,9 @@
 		<Unit filename="C:/Users/Oren/CLionProjects/farm2/DataCenterManager.h">
 			<Option target="farm2"/>
 		</Unit>
+		<Unit filename="C:/Users/Oren/CLionProjects/farm2/UpTree.h">
+			<Option target="farm2"/>
+		</Unit>
 		<Unit filename="C:/Users/Oren/CLionProjects/farm2/library2.cpp">
 			<Option target="farm2"/>
 		</Unit>
