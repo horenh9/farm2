@@ -17,15 +17,15 @@ public:
     int size;
 
     UpTree(int size) : size(size) {
-        for (int i = 1; i < size + 1; ++i) {
-            UpVertex<T> vertex = new UpVertex<T>;
-            parents[i] = new UpVertex<T>(vertex);
+        for (int i = 1; i <= size ; ++i) {
+            UpVertex<T> *vertex = new UpVertex<T>;
+            parents[i] = vertex;
         }
     }
 
-    T Find(int a) {
+    int Find(int a) {
         if (a > size || a < 1)
-            return nullptr;
+            return 0;
         int temp1 = a;
         while (parents[a]->key != a) {
             int temp2 = a;
@@ -36,18 +36,19 @@ public:
             temp1 = parents[temp1]->key;
             parents[temp2]->key = a;
         }
+        return a;
     }
 
     T Union(int a, int b) {
         if (a > size || b > size || a < 1 || b < 1)
             return nullptr;
-        if (parents[a]->size > parents[b]->size) {
-            parents[b] = parents[a];
-            parents[a]->size += parents[b]->size;
-            parents[b]->parent = parents[a]->parent;
-            return Find(b);
+        int first = Find(a), second = Find(b);
+        if (parents[first]->size > parents[second]->size) {
+            parents[second] = parents[first];
+            parents[first]->size += parents[second]->size;
+            parents[second]->parent = parents[first]->parent;
         } else
-            return Union(b, a);
+            return Union(second, a);
     }
 };
 
