@@ -15,7 +15,6 @@ public:
     T *data;
 
 };
-//
 
 template<class T>
 class DynamicHashTable {

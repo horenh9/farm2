@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "AVLtree.h"
 #include "UpTree.h"
+#include "HashTable.h"
 
 class DataCenter;
 
@@ -34,7 +35,7 @@ public:
 class DataCenterManager {
 public:
     UpTree<DataCenter> farms;
-//    Hush_Table *hush_Servers;
+    DynamicHashTable<Server*> *hush_Servers;
     AVLtree<Server *, int> all_servers_by_traffic;
     int servers;
     int size;
@@ -52,6 +53,10 @@ public:
     StatusType SumHighestTrafficServers(int dataCenterID, int k, int *traffic);
 
     virtual ~DataCenterManager();
+
+    void mergeAVL(DataCenter *pCenter, DataCenter *pDataCenter);
+
+    void SetServerArray(Server **pServer, DataCenter *pCenter);
 };
 
 
