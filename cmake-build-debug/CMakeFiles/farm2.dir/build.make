@@ -42,10 +42,10 @@ RM = "C:\Program Files\JetBrains\CLion 2018.3.4\bin\cmake\win\bin\cmake.exe" -E 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\Oren\CLionProjects\farm2
+CMAKE_SOURCE_DIR = C:\Users\sbach\CLionProjects\farm2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\Oren\CLionProjects\farm2\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\sbach\CLionProjects\farm2\cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/farm2.dir/depend.make
@@ -58,29 +58,29 @@ include CMakeFiles/farm2.dir/flags.make
 
 CMakeFiles/farm2.dir/library2.cpp.obj: CMakeFiles/farm2.dir/flags.make
 CMakeFiles/farm2.dir/library2.cpp.obj: ../library2.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Oren\CLionProjects\farm2\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/farm2.dir/library2.cpp.obj"
-	C:\MinGW\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\farm2.dir\library2.cpp.obj -c C:\Users\Oren\CLionProjects\farm2\library2.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\sbach\CLionProjects\farm2\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/farm2.dir/library2.cpp.obj"
+	C:\Users\sbach\Downloads\x86_64-4.9.1-release-posix-seh-rt_v3-rev0\mingw64\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\farm2.dir\library2.cpp.obj -c C:\Users\sbach\CLionProjects\farm2\library2.cpp
 
 CMakeFiles/farm2.dir/library2.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/farm2.dir/library2.cpp.i"
-	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Oren\CLionProjects\farm2\library2.cpp > CMakeFiles\farm2.dir\library2.cpp.i
+	C:\Users\sbach\Downloads\x86_64-4.9.1-release-posix-seh-rt_v3-rev0\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\sbach\CLionProjects\farm2\library2.cpp > CMakeFiles\farm2.dir\library2.cpp.i
 
 CMakeFiles/farm2.dir/library2.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/farm2.dir/library2.cpp.s"
-	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Oren\CLionProjects\farm2\library2.cpp -o CMakeFiles\farm2.dir\library2.cpp.s
+	C:\Users\sbach\Downloads\x86_64-4.9.1-release-posix-seh-rt_v3-rev0\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\sbach\CLionProjects\farm2\library2.cpp -o CMakeFiles\farm2.dir\library2.cpp.s
 
 CMakeFiles/farm2.dir/DataCenterManager.cpp.obj: CMakeFiles/farm2.dir/flags.make
 CMakeFiles/farm2.dir/DataCenterManager.cpp.obj: ../DataCenterManager.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Oren\CLionProjects\farm2\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/farm2.dir/DataCenterManager.cpp.obj"
-	C:\MinGW\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\farm2.dir\DataCenterManager.cpp.obj -c C:\Users\Oren\CLionProjects\farm2\DataCenterManager.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\sbach\CLionProjects\farm2\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/farm2.dir/DataCenterManager.cpp.obj"
+	C:\Users\sbach\Downloads\x86_64-4.9.1-release-posix-seh-rt_v3-rev0\mingw64\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\farm2.dir\DataCenterManager.cpp.obj -c C:\Users\sbach\CLionProjects\farm2\DataCenterManager.cpp
 
 CMakeFiles/farm2.dir/DataCenterManager.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/farm2.dir/DataCenterManager.cpp.i"
-	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Oren\CLionProjects\farm2\DataCenterManager.cpp > CMakeFiles\farm2.dir\DataCenterManager.cpp.i
+	C:\Users\sbach\Downloads\x86_64-4.9.1-release-posix-seh-rt_v3-rev0\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\sbach\CLionProjects\farm2\DataCenterManager.cpp > CMakeFiles\farm2.dir\DataCenterManager.cpp.i
 
 CMakeFiles/farm2.dir/DataCenterManager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/farm2.dir/DataCenterManager.cpp.s"
-	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Oren\CLionProjects\farm2\DataCenterManager.cpp -o CMakeFiles\farm2.dir\DataCenterManager.cpp.s
+	C:\Users\sbach\Downloads\x86_64-4.9.1-release-posix-seh-rt_v3-rev0\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\sbach\CLionProjects\farm2\DataCenterManager.cpp -o CMakeFiles\farm2.dir\DataCenterManager.cpp.s
 
 # Object files for target farm2
 farm2_OBJECTS = \
@@ -96,7 +96,7 @@ farm2.exe: CMakeFiles/farm2.dir/build.make
 farm2.exe: CMakeFiles/farm2.dir/linklibs.rsp
 farm2.exe: CMakeFiles/farm2.dir/objects1.rsp
 farm2.exe: CMakeFiles/farm2.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\Oren\CLionProjects\farm2\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable farm2.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\sbach\CLionProjects\farm2\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable farm2.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\farm2.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -109,6 +109,6 @@ CMakeFiles/farm2.dir/clean:
 .PHONY : CMakeFiles/farm2.dir/clean
 
 CMakeFiles/farm2.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\Oren\CLionProjects\farm2 C:\Users\Oren\CLionProjects\farm2 C:\Users\Oren\CLionProjects\farm2\cmake-build-debug C:\Users\Oren\CLionProjects\farm2\cmake-build-debug C:\Users\Oren\CLionProjects\farm2\cmake-build-debug\CMakeFiles\farm2.dir\DependInfo.cmake --color=$(COLOR)
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\sbach\CLionProjects\farm2 C:\Users\sbach\CLionProjects\farm2 C:\Users\sbach\CLionProjects\farm2\cmake-build-debug C:\Users\sbach\CLionProjects\farm2\cmake-build-debug C:\Users\sbach\CLionProjects\farm2\cmake-build-debug\CMakeFiles\farm2.dir\DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/farm2.dir/depend
 
