@@ -25,7 +25,7 @@ public:
 
     int Find(int a) {
         if (a > size || a < 1)
-            return 0;
+            return -1;
         int temp1 = a;
         while (parents[a]->key != a) {
             int temp2 = a;
@@ -41,14 +41,15 @@ public:
 
     T Union(int a, int b) {
         if (a > size || b > size || a < 1 || b < 1)
-            return nullptr;
+            return -1;
         int first = Find(a), second = Find(b);
         if (parents[first]->size > parents[second]->size) {
             parents[second] = parents[first];
             parents[first]->size += parents[second]->size;
             parents[second]->parent = parents[first]->parent;
         } else
-            return Union(second, a);
+            return Union(second, first);
+        return first;
     }
 };
 
