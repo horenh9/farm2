@@ -122,6 +122,33 @@ farm2/fast:
 	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/build
 .PHONY : farm2/fast
 
+DataCenterManager.obj: DataCenterManager.cpp.obj
+
+.PHONY : DataCenterManager.obj
+
+# target to build an object file
+DataCenterManager.cpp.obj:
+	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/DataCenterManager.cpp.obj
+.PHONY : DataCenterManager.cpp.obj
+
+DataCenterManager.i: DataCenterManager.cpp.i
+
+.PHONY : DataCenterManager.i
+
+# target to preprocess a source file
+DataCenterManager.cpp.i:
+	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/DataCenterManager.cpp.i
+.PHONY : DataCenterManager.cpp.i
+
+DataCenterManager.s: DataCenterManager.cpp.s
+
+.PHONY : DataCenterManager.s
+
+# target to generate assembly for a file
+DataCenterManager.cpp.s:
+	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/DataCenterManager.cpp.s
+.PHONY : DataCenterManager.cpp.s
+
 library2.obj: library2.cpp.obj
 
 .PHONY : library2.obj
@@ -158,6 +185,9 @@ help:
 	@echo ... farm2
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... DataCenterManager.obj
+	@echo ... DataCenterManager.i
+	@echo ... DataCenterManager.s
 	@echo ... library2.obj
 	@echo ... library2.i
 	@echo ... library2.s

@@ -1,6 +1,7 @@
 #ifndef DATACENTERMANAGER_DATACENTERMANAGER_H
 #define DATACENTERMANAGER_DATACENTERMANAGER_H
 
+#include <stdint.h>
 #include "AVLtree.h"
 #include "UpTree.h"
 
@@ -11,42 +12,46 @@ public:
     const int id;
     int traffic;
     DataCenter *home;
+
+    Server(const int id, int traffic, DataCenter *home);
+
+    bool operator>(const Server &) const;
+
+    bool operator<(const Server &) const;
+
 };
 
 class DataCenter {
 public:
     int id;
     int servers;
-    AVLtree<int, Server*> servers_by_traffic;
+    AVLtree<Server *, int> servers_by_traffic;
     DataCenter *root;
-};
 
+    DataCenter(int id);
+};
 
 class DataCenterManager {
 public:
-    UpTree farms;
-    Hush_Table *hush_Servers;
-    AVLtree<int, Server*> all_servers_by_traffic;
+    UpTree<DataCenter> farms;
+//    Hush_Table *hush_Servers;
+    AVLtree<Server *, int> all_servers_by_traffic;
     int servers;
+    int size;
 
+    explicit DataCenterManager(int n);
 
-    void *Init();
+    StatusType MergeDataCenters(int dataCenter1, int dataCenter2);
 
-    StatusType MergeDataCenters(void *DS, int dataCenter1, int dataCenter2);
+    StatusType AddServer(int dataCenterID, int serverID);
 
-    StatusType AddServer(void *DS, int dataCenterID, int serverID);
+    StatusType RemoveServer(int serverID);
 
-    StatusType RemoveServer(void *DS, int serverID);
+    StatusType SetTraffic(int serverID, int traffic);
 
-    StatusType SetTraffic(void *DS, int serverID, int traffic);
+    StatusType SumHighestTrafficServers(int dataCenterID, int k, int *traffic);
 
-    StatusType SumHighestTrafficServers(void *DS, int dataCenterID, int k, int *traffic);
-
-    void Quit(void **DS);
-
-    DataCenterManager();
-
-    ~DataCenterManager();
+    virtual ~DataCenterManager();
 };
 
 

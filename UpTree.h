@@ -8,6 +8,8 @@ public:
     int size;
     T *parent;
     T *data;
+
+    UpVertex(int key, T *data) : key(key), size(0), parent(data), data(data) {}
 };
 
 template<class T>
@@ -16,9 +18,9 @@ public:
     UpVertex<T> **parents;
     int size;
 
-    UpTree(int size) : size(size) {
-        for (int i = 1; i <= size ; ++i) {
-            UpVertex<T> *vertex = new UpVertex<T>;
+     UpTree(int size) : size(size) {
+        for (int i = 1; i <= size; ++i) {
+            UpVertex<T> *vertex = new UpVertex<T>(i, nullptr);
             parents[i] = vertex;
         }
     }
@@ -39,11 +41,11 @@ public:
         return a;
     }
 
-    T Union(int a, int b) {
+    int Union(int a, int b) {
         if (a > size || b > size || a < 1 || b < 1)
             return -1;
         int first = Find(a), second = Find(b);
-        if (parents[first]->size > parents[second]->size) {
+        if (parents[first]->size >= parents[second]->size) {
             parents[second] = parents[first];
             parents[first]->size += parents[second]->size;
             parents[second]->parent = parents[first]->parent;
