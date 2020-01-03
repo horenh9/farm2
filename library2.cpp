@@ -1,9 +1,9 @@
 #include <iostream>
 #include "DataCenterManager.h"
 
-void *Init() {
+void *Init(int n) {
     try {
-        DataCenterManager *DS = new DataCenterManager();
+        DataCenterManager *DS = new DataCenterManager(n);
         return (void *) DS;
     }
     catch (...) {

@@ -9,7 +9,7 @@ public:
     T *parent;
     T *data;
 
-    UpVertex(int key) : key(key), size(0), parent(nullptr), data(nullptr) {}
+    UpVertex(int key, T *data) : key(key), size(0), parent(data), data(data) {}
 };
 
 template<class T>
@@ -18,9 +18,9 @@ public:
     UpVertex<T> **parents;
     int size;
 
-    UpTree(int size) : size(size) {
+     UpTree(int size) : size(size) {
         for (int i = 1; i <= size; ++i) {
-            UpVertex<T> *vertex = new UpVertex<T>(i);
+            UpVertex<T> *vertex = new UpVertex<T>(i, nullptr);
             parents[i] = vertex;
         }
     }
