@@ -8,18 +8,23 @@
 
 Server::Server(int id, int traffic, DataCenter *home) : id(id), traffic(traffic), home(home) {}
 
-bool Server::operator>(const Server *server) const {
-    if (this->traffic > server->traffic)
+bool Server::operator==(const Server &server) const {
+    return traffic == server.traffic && id == server.id;
+}
+
+bool Server::operator>(const Server &server) const {
+    if (traffic > server.traffic)
         return true;
-    else if (this->traffic == server->traffic)
-        return this->id > server->id;
+    else if (traffic == server.traffic)
+        return id > server.id;
     else
         return false;
 }
 
-bool Server::operator<(const Server *server) const {
-    return !(this > server);
+bool Server::operator<(const Server &server) const {
+    return !(*this > server || *this == server);
 }
+
 
 Server &Server::operator=(const Server &other) {
     id = other.id;
@@ -329,8 +334,8 @@ vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
 int sumK(vertex<Server, int> *index) {
     if (index->parent == nullptr)
         return 0;
-    if (index == index->parent->left_son)
-        return *(index->data) + index->parent->rank_right_son + sumK(index->parent);
+    if (&(index->key) > &(index->parent->key))
+        return *(index->parent->data) + sumK(index->parent);
     else
         return sumK(index->parent);
 }

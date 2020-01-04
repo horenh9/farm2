@@ -16,11 +16,14 @@ public:
 
     Server(int id, int traffic, DataCenter *home);
 
-    bool operator>(const Server *) const;
+    bool operator==(const Server &) const;
 
-    bool operator<(const Server *) const;
+    bool operator>(const Server &) const;
+
+    bool operator<(const Server &) const;
 
     Server &operator=(const Server &);
+
 
 };
 
