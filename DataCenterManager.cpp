@@ -189,6 +189,7 @@ void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position) {
     setArrayInAVL(tree->left_son, servers, position);
     setArrayInAVL(tree->right_son, servers, position);
     tree->key = *servers[*position];
+    tree->data = &tree->key.traffic;
     (*position)++;
     if (tree->left_son != nullptr)
         tree->rank_left_son = tree->left_son->rank_left_son + tree->left_son->rank_right_son + *tree->left_son->data;
