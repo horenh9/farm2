@@ -10,15 +10,17 @@ class DataCenter;
 
 class Server {
 public:
-    const int id;
+    int id;
     int traffic;
     DataCenter *home;
 
-    Server(const int id, int traffic, DataCenter *home);
+    Server(int id, int traffic, DataCenter *home);
 
-    bool operator>(const Server &) const;
+    bool operator>(const Server *) const;
 
-    bool operator<(const Server &) const;
+    bool operator<(const Server *) const;
+
+    Server &operator=(const Server &);
 
 };
 
@@ -26,7 +28,7 @@ class DataCenter {
 public:
     int id;
     int servers;
-    AVLtree<Server *, int> servers_by_traffic;
+    AVLtree<Server, int> *servers_by_traffic;
     DataCenter *root;
 
     explicit DataCenter(int id);
@@ -34,11 +36,11 @@ public:
 
 class DataCenterManager {
 public:
-    UpTree<DataCenter> farms;
-    DynamicHashTable<Server*> *hush_Servers;
-    AVLtree<Server *, int> all_servers_by_traffic;
+    UpTree<DataCenter> *farms;
+    DynamicHashTable<Server> *hash_Servers;
+    AVLtree<Server, int> *all_servers_by_traffic;
     int servers;
-    int size;
+    int num_farms;
 
     explicit DataCenterManager(int n);
 
@@ -52,11 +54,7 @@ public:
 
     StatusType SumHighestTrafficServers(int dataCenterID, int k, int *traffic);
 
-    virtual ~DataCenterManager();
-
-
-
-    void SetServerArray(Server **pServer, DataCenter *pCenter);
+    ~DataCenterManager();
 };
 
 

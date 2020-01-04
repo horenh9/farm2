@@ -1,37 +1,46 @@
 #include "DataCenterManager.h"
 
-#define STARTING_HUSH 11
+#define STARTING_HASH 11
 
 
 
 ////****************Server**************////
 
-Server::Server(const int id, int traffic, DataCenter *home) : id(id), traffic(traffic), home(home) {}
+Server::Server(int id, int traffic, DataCenter *home) : id(id), traffic(traffic), home(home) {}
 
-bool Server::operator>(const Server &server) const {
-    if (this->traffic > server.traffic)
+bool Server::operator>(const Server *server) const {
+    if (this->traffic > server->traffic)
         return true;
-    else if (this->traffic == server.traffic)
-        return this->id > server.id;
+    else if (this->traffic == server->traffic)
+        return this->id > server->id;
     else
         return false;
 }
 
-bool Server::operator<(const Server &server) const {
-    return !(this > &server);
+bool Server::operator<(const Server *server) const {
+    return !(this > server);
+}
+
+Server &Server::operator=(const Server &other) {
+    id = other.id;
+    home = other.home;
+    traffic = other.traffic;
 }
 
 ////****************DataCenterManager**************////
 
-DataCenter::DataCenter(int id) : id(id), servers(0), servers_by_traffic(AVLtree<Server *, int>()), root(this) {}
+DataCenter::DataCenter(int id) : id(id), servers(0), root(this) {
+    servers_by_traffic = new AVLtree<Server, int>();
+}
 
-DataCenterManager::DataCenterManager(int n) : size(n), servers(0), farms(UpTree<DataCenter>(n)) {
-    DynamicHashTable<Server *> *hush_Servers = new DynamicHashTable<Server *>(STARTING_HUSH);
-    AVLtree<Server *, int> all_servers_by_traffic = AVLtree<Server *, int>();
-    for (int i = 0; i < n; ++i) {
+DataCenterManager::DataCenterManager(int n) : num_farms(n), servers(0) {
+    DynamicHashTable<Server> *hash_Servers = new DynamicHashTable<Server>(STARTING_HASH);
+    all_servers_by_traffic = new AVLtree<Server, int>();
+    farms = new UpTree<DataCenter>(n + 1);
+    for (int i = 1; i <= n; ++i) {
         DataCenter *farm = new DataCenter(i);
-        farms.parents[i]->parent = farm;//לא יודע למה יש פה נקודות
-        farms.parents[i]->data = farm;
+        UpVertex<DataCenter> *upVertex = new UpVertex<DataCenter>(i, farm);
+        farms->parents[i] = upVertex;
     }
 }
 
@@ -39,31 +48,33 @@ DataCenterManager::DataCenterManager(int n) : size(n), servers(0), farms(UpTree<
 //declarations
 void mergeAVL(DataCenter *dc1, DataCenter *dc2);
 
-void SetAVLToArray(vertex<Server *, int> *currHead, Server **array, int *position);
+void SetAVLToArray(vertex<Server, int> *currHead, Server **array, int *position);
 
 void mergeArray(Server **combined, Server **array1, Server **array2, int size1, int size2);
 
-AVLtree<Server *, int> uncompleteTree(int size);
+AVLtree<Server, int> *incompleteTree(int size);
 
 int logUp(int size);
 
-vertex<Server *, int> *createAVL(int height);
+int pow(int num, int power);
 
-void removeLeafs(vertex<Server *, int> *currHead, int *position, int k);
+vertex<Server, int> *createAVL(int height);
 
-void setArrayInAVL(vertex<Server *, int> *tree, Server **servers, int *position);
+void removeLeaves(vertex<Server, int> *currHead, int *position, int k);
+
+void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position);
 
 //implementaion
 StatusType DataCenterManager::MergeDataCenters(int dataCenter1, int dataCenter2) {
-    if (dataCenter1 < 1 || dataCenter1 > size || dataCenter2 < 1 || dataCenter2 > size)
+    if (dataCenter1 < 1 || dataCenter1 > num_farms || dataCenter2 < 1 || dataCenter2 > num_farms)
         return INVALID_INPUT;
-    int root1 = farms.Find(dataCenter1);
-    int root2 = farms.Find(dataCenter2);
-    if (farms.parents[root1]->size > farms.parents[root2]->size)
-        mergeAVL(farms.parents[root1]->data, farms.parents[root2]->data);
+    int root1 = farms->Find(dataCenter1);
+    int root2 = farms->Find(dataCenter2);
+    if (farms->parents[root1]->size > farms->parents[root2]->size)
+        mergeAVL(farms->parents[root1]->data, farms->parents[root2]->data);
     else
-        mergeAVL(farms.parents[root2]->data, farms.parents[root1]->data);
-    farms.Union(root1, root2);//שוב נקודה לא יודע למה
+        mergeAVL(farms->parents[root2]->data, farms->parents[root1]->data);
+    farms->Union(root1, root2);
     return SUCCESS;
 }
 
@@ -72,25 +83,26 @@ void mergeAVL(DataCenter *dc1, DataCenter *dc2) {//putting dc2 avl in dc1 avl
     Server **serversArray1 = new Server *[dc1->servers];
     Server **serversArray2 = new Server *[dc2->servers];
     int patrolled = 0;
-    SetAVLToArray(dc1->servers_by_traffic.head, serversArray1, &patrolled);
+    SetAVLToArray(dc1->servers_by_traffic->head, serversArray1, &patrolled);
     patrolled = 0;
-    SetAVLToArray(dc2->servers_by_traffic.head, serversArray2, &patrolled);
+    SetAVLToArray(dc2->servers_by_traffic->head, serversArray2, &patrolled);
     Server **serversArrayTotal = new Server *[dc1->servers + dc2->servers];
     mergeArray(serversArrayTotal, serversArray1, serversArray2, dc1->servers, dc2->servers);
-    AVLtree<Server *, int> combined = uncompleteTree(dc1->servers + dc2->servers);
+    AVLtree<Server, int> *combined = incompleteTree(dc1->servers + dc2->servers);
     patrolled = 0;
-    setArrayInAVL(combined.head, serversArrayTotal, &patrolled);
+    setArrayInAVL(combined->head, serversArrayTotal, &patrolled);
+    dc1->servers_by_traffic = combined;
     delete[]serversArray1;
     delete[]serversArray2;
     delete[]serversArrayTotal;
 }
 
 //making an array from an avl
-void SetAVLToArray(vertex<Server *, int> *currHead, Server **array, int *position) {
+void SetAVLToArray(vertex<Server, int> *currHead, Server **array, int *position) {
     if (currHead == nullptr)
         return;
     SetAVLToArray(currHead->left_son, array, position);
-    array[*position] = currHead->key;
+    array[*position] = &(currHead->key);
     (*position)++;
     SetAVLToArray(currHead->right_son, array, position);
 }
@@ -120,28 +132,35 @@ void mergeArray(Server **combined, Server **array1, Server **array2, int size1, 
 
 }
 
-//creating an empty uncomplete tree with "size" nodes
-AVLtree<Server *, int> uncompleteTree(int size) {
+//creating an empty incomplete tree with "size" nodes
+AVLtree<Server, int> *incompleteTree(int size) {
     int height = logUp(size);
-    AVLtree<Server *, int> *servers = new AVLtree<Server *, int>();
+    AVLtree<Server, int> *servers = new AVLtree<Server, int>();
     servers->head = createAVL(height);
     int position = 0;
-    removeLeafs(servers->head, &position, (2 ^ height) - size);
-    return *servers;
+    removeLeaves(servers->head, &position, (pow(2, height)) - size);
+    return servers;
 }
 
 //getting the log of a number, the upper value.
 int logUp(int size) {
     int counter = 1;
-    while (size > (2 ^ counter) - 1)
+    while (size > (pow(2, counter)) - 1)//לממש בחזקת
         counter++;
     return counter;
 }
 
+int pow(int num, int power) {
+    int res = num;
+    for (int i = 0; i < power; ++i)
+        res *= num;
+    return res;
+}
+
 //creating an empty complete tree
-vertex<Server *, int> *createAVL(int height) {
+vertex<Server, int> *createAVL(int height) {
     if (height > 0) {
-        vertex<Server *, int> *curr = new vertex<Server *, int>(nullptr, 0);
+        vertex<Server, int> *curr = new vertex<Server, int>(Server(0, 0, nullptr), nullptr);
         curr->left_son = createAVL(height - 1);
         curr->right_son = createAVL(height - 1);
         return curr;
@@ -149,53 +168,63 @@ vertex<Server *, int> *createAVL(int height) {
     return nullptr;
 }
 
-//removing k leafs from a complete tree and transforming him to an uncomplete tree
-void removeLeafs(vertex<Server *, int> *currHead, int *position, int k) {
+//removing k leafs from a complete tree and transforming him to an incomplete tree
+void removeLeaves(vertex<Server, int> *currHead, int *position, int k) {
     if (currHead == nullptr)
         return;
     if (*position < k) {
-        removeLeafs(currHead->right_son, position, k);
+        removeLeaves(currHead->right_son, position, k);
         if (currHead->right_son == nullptr && currHead->left_son == nullptr) {
             delete currHead;
             (*position)++;
         } else
-            removeLeafs(currHead->left_son, position, k);
+            removeLeaves(currHead->left_son, position, k);
     }
 }
 
 //filling the avl with data from sorted array
-void setArrayInAVL(vertex<Server *, int> *tree, Server **servers, int *position) {
+void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position) {
     if (tree == nullptr)
         return;
     setArrayInAVL(tree->left_son, servers, position);
-    tree->key = servers[*position];
+    tree->key = *servers[*position];
     (*position)++;
     setArrayInAVL(tree->right_son, servers, position);
 }
 
 ////           Others             ////
 
+vertex<Server, int> *selectK(vertex<Server, int> *vertex, int i);
+
+int sumK(vertex<Server, int> *index);
+
 StatusType DataCenterManager::AddServer(int dataCenterID, int serverID) {
-    if (dataCenterID < 1 || dataCenterID > size)
+    if (dataCenterID < 1 || dataCenterID > num_farms)
         return INVALID_INPUT;
-    if(hush_Servers->find(serverID)!= nullptr)
+    if (hash_Servers->find(serverID) != nullptr)
         return FAILURE;
-    int root = farms.Find(dataCenterID);
-    Server *server = new Server(serverID, 0, farms.parents[root]->parent);
-    hush_Servers->// add or add to table?
+    int root = farms->Find(dataCenterID);
+    Server *server = new Server(serverID, 0, farms->parents[root]->parent);
+    hash_Servers->add(serverID, server);
     return SUCCESS;
 }
 
 StatusType DataCenterManager::RemoveServer(int serverID) {
     if (serverID < 0)
         return INVALID_INPUT;
-    Server *server = nullptr;    //מוצא אותו בטבלת הערבול ודרכו את החווה שלו, גם מסיר אותו מטבלת הערבול
-    //הוספת בדיקה אם קיים שרת כזה
-    int dataCenterId = farms.Find(server->home->id);
-    DataCenter *farm = farms.parents[dataCenterId]->data;
+    Node<Server> *temp = hash_Servers->find(serverID);
+    if (temp == nullptr)
+        return FAILURE;
+    Server *server = temp->data;
+    int dataCenterId = farms->Find(server->home->id);
+    DataCenter *farm = farms->parents[dataCenterId]->data;
     if (server->traffic > 0) {
-        farm->servers_by_traffic.remove_vertex(server);
-        all_servers_by_traffic.remove_vertex(server);
+        vertex<Server, int> *temp1 = get_vertex_by_ID(farm->servers_by_traffic->head, *server);
+        farm->servers_by_traffic->remove_vertex(*server);
+        delete temp1;
+        vertex<Server, int> *temp2 = get_vertex_by_ID(all_servers_by_traffic->head, *server);
+        all_servers_by_traffic->remove_vertex(*server);
+        delete temp2;
     }
     delete server;
     return SUCCESS;
@@ -204,29 +233,93 @@ StatusType DataCenterManager::RemoveServer(int serverID) {
 StatusType DataCenterManager::SetTraffic(int serverID, int traffic) {
     if (serverID < 0 || traffic < 0)
         return INVALID_INPUT;
-    Server *server = nullptr;    //מוצא אותו בטבלת הערבול ודרכו את החווה שלו, גם מסיר אותו מטבלת הערבול
-    //הוספת בדיקה אם קיים שרת כזה
-    int dataCenterId = farms.Find(server->home->id);
-    DataCenter *farm = farms.parents[dataCenterId]->data;
+    Node<Server> *temp = hash_Servers->find(serverID);
+    if (temp == nullptr)
+        return FAILURE;
+    Server *server = temp->data;
+    int dataCenterId = farms->Find(server->home->id);
+    DataCenter *farm = farms->parents[dataCenterId]->data;
+    vertex<Server, int> *temp1 = nullptr;
+    vertex<Server, int> *temp2 = nullptr;
     if (server->traffic > 0) {
-        farm->servers_by_traffic.remove_vertex(server);
-        all_servers_by_traffic.remove_vertex(server);
+        farm->servers_by_traffic->remove_vertex(*server);
+        farm->servers--;
+        temp1 = get_vertex_by_ID(farm->servers_by_traffic->head, *server);
+        all_servers_by_traffic->remove_vertex(*server);
+        temp2 = get_vertex_by_ID(all_servers_by_traffic->head, *server);
+        servers--;
+    } else if (traffic != 0) {
+        temp1 = new vertex<Server, int>(*server, nullptr);
+        temp2 = new vertex<Server, int>(*server, nullptr);
     }
     server->traffic = traffic;
     if (traffic != 0) {
-        vertex<Server *, int> *vertex1 = new vertex<Server *, int>(server,
-                                                                   nullptr);//אני יוצר 2 כי בכל remove vertex מוחקים(ממש, עם דיליט והכל) אחד
-        farm->servers_by_traffic.add_vertex(vertex1);
-        vertex<Server *, int> *vertex2 = new vertex<Server *, int>(server, nullptr);
-        all_servers_by_traffic.add_vertex(vertex2);
+        temp1->key.traffic = traffic;
+        temp2->key.traffic = traffic;
+        farm->servers_by_traffic->add_vertex(temp1);
+        farm->servers++;
+        all_servers_by_traffic->add_vertex(temp2);
+        servers++;
+    } else {
+        if (temp1 != nullptr) {
+            delete temp1;
+            delete temp2;
+        }
     }
+    return SUCCESS;
+
+}
+
+StatusType DataCenterManager::SumHighestTrafficServers(int dataCenterID, int k, int *traffic) {
+    if (dataCenterID < 0 || dataCenterID > num_farms || k < 0 || traffic == nullptr)
+        return INVALID_INPUT;
+    vertex<Server, int> *index = nullptr;
+    if (dataCenterID == 0) {
+        if (k > servers)
+            k = servers;
+        index = selectK(all_servers_by_traffic->head, servers - k + 1);
+        *traffic = sumK(index);
+    } else {
+        DataCenter *dataCenter = farms->parents[farms->Find(dataCenterID)]->data;
+        if (k > dataCenter->servers)
+            k = dataCenter->servers;
+        index = selectK(dataCenter->servers_by_traffic->head, servers - k + 1);
+        *traffic = sumK(index);
+    }
+    return SUCCESS;
+
 }
 
 DataCenterManager::~DataCenterManager() {
-
+    for (int i = 1; i <= num_farms; ++i) {
+        delete farms->parents[i]->data;
+        delete farms->parents[i];
+    }
+    delete farms;
+    delete all_servers_by_traffic;
+    delete hash_Servers;
 }
 
+vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
+    if (vertex == nullptr)
+        return nullptr;
+    int vl_size = 0, vr_size = 0;
+    if (vertex->left_son != nullptr)
+        vl_size = vertex->left_son->sub_size;
+    if (vertex->right_son != nullptr)
+        vr_size = vertex->left_son->sub_size;
+    if (vl_size == k - 1)
+        return vertex;
+    if (vr_size > k - 1)
+        return selectK(vertex->left_son, k);
+    else
+        return selectK(vertex->right_son, k - vertex->left_son->sub_size - 1);
+}
 
+int sumK(vertex<Server, int> *index){
+    if(index==index->parent->left_son)
+        return index->sumK(index->parent)
+}
 
 
 

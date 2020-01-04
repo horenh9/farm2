@@ -41,10 +41,9 @@ public:
         return a;
     }
 
-    int Union(int a, int b) {
-        if (a > size || b > size || a < 1 || b < 1)
+    int Union(int first, int second) {
+        if (first > size || second > size || first < 1 || second < 1)
             return -1;
-        int first = Find(a), second = Find(b);
         if (parents[first]->size >= parents[second]->size) {
             parents[second] = parents[first];
             parents[first]->size += parents[second]->size;

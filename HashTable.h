@@ -4,6 +4,10 @@
 
 #ifndef FARM2_HASHTABLE_H
 
+#define MIN_SIZE 11
+#define SHRINK_FACTOR 0.25
+#define EXPAND_FACTOR 0.75
+
 template<class T>
 class Node {
 public:
@@ -68,7 +72,7 @@ public:
         if (add_to_table(table, id, data))
             non_empty++;
 
-        if (non_empty / size >= 0.75)
+        if ((double(non_empty) / double(size)) >= EXPAND_FACTOR)
             expand();
         return 1; //success
     }
@@ -113,7 +117,7 @@ public:
             }
             node = node->next;
         }
-        if ((non_empty / size <= 0.25) && size >= 4)
+        if ((non_empty / size <= SHRINK_FACTOR) && size > MIN_SIZE)
             shrink();
         return -1;//shouldn't get here
     }
