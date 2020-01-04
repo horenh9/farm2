@@ -182,14 +182,22 @@ void removeLeaves(vertex<Server, int> *currHead, int *position, int k) {
     }
 }
 
-//filling the avl with data from sorted array
+//filling the avl with data from sorted array. doing post order patrol
 void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position) {
     if (tree == nullptr)
         return;
     setArrayInAVL(tree->left_son, servers, position);
+    setArrayInAVL(tree->right_son, servers, position);
     tree->key = *servers[*position];
     (*position)++;
-    setArrayInAVL(tree->right_son, servers, position);
+    if (tree->left_son != nullptr)
+        tree->rank_left_son = tree->left_son->rank_left_son + tree->left_son->rank_right_son;
+    else
+        tree->rank_left_son = 0;
+    if (tree->right_son != nullptr)
+        tree->rank_right_son = tree->right_son->rank_left_son + tree->right_son->rank_right_son;
+    else
+        tree->rank_right_son = 0;
 }
 
 ////           Others             ////
@@ -316,8 +324,8 @@ vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
         return selectK(vertex->right_son, k - vertex->left_son->sub_size - 1);
 }
 
-int sumK(vertex<Server, int> *index){
-    if(index==index->parent->left_son)
+int sumK(vertex<Server, int> *index) {
+    if (index == index->parent->left_son)
         return index->sumK(index->parent)
 }
 
