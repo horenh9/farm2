@@ -29,7 +29,7 @@ public:
     AVLtree<Server *, int> servers_by_traffic;
     DataCenter *root;
 
-    DataCenter(int id);
+    explicit DataCenter(int id);
 };
 
 class DataCenterManager {
@@ -54,7 +54,7 @@ public:
 
     virtual ~DataCenterManager();
 
-    void mergeAVL(DataCenter *pCenter, DataCenter *pDataCenter);
+
 
     void SetServerArray(Server **pServer, DataCenter *pCenter);
 };
