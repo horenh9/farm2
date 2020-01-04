@@ -195,7 +195,8 @@ void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position) {
     else
         tree->rank_left_son = 0;
     if (tree->right_son != nullptr)
-        tree->rank_right_son =tree->right_son->rank_left_son + tree->right_son->rank_right_son + *tree->right_son->data;
+        tree->rank_right_son =
+                tree->right_son->rank_left_son + tree->right_son->rank_right_son + *tree->right_son->data;
     else
         tree->rank_right_son = 0;
 }
@@ -325,8 +326,12 @@ vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
 }
 
 int sumK(vertex<Server, int> *index) {
+    if (index->parent == nullptr)
+        return 0;
     if (index == index->parent->left_son)
-        return index->sumK(index->parent)
+        return *(index->data) + index->parent->rank_right_son + sumK(index->parent);
+    else
+        return sumK(index->parent);
 }
 
 
