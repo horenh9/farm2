@@ -14,13 +14,14 @@ public:
     int height_right;
     vertex *parent;
     int sub_size;
-    int rank_right_son;
+    T rank_right_son;
+    T rank_left_son;
 
     vertex(Key key, T *data) :
             key(key), data(data),
             left_son(nullptr), right_son(nullptr),
             height_left(0), height_right(0),
-            parent(nullptr), sub_size(1), rank_right_son(0) {}
+            parent(nullptr), sub_size(1), rank_right_son(0), rank_left_son(0) {}
 
     ~vertex() {
         if (left_son != nullptr)
@@ -75,10 +76,23 @@ public:
         update_path_height(new_parent);
         //now check if balance factor is ok, and handle it if not
         update_path_sub_size(v, 1);
+        update_rank(v, *v->data, 0);
+        update_rank(v, *v->data, 1);
         fix_balance_factor(v);
         update_path_height(v);
 
         return SUCCESS;
+    }
+
+    void update_rank(vertex<Key, T> *v, T factor, int side) {
+        if (v->parent == nullptr)
+            return;
+        if (!side) {//goes up from right son
+            if (v->data > v->parent->data)
+                v->parent->rank_right_son += factor;
+        } else//goes up from left son
+            v->parent->rank_left_son += factor;
+        update_rank(v->parent, factor, side);
     }
 
     void update_path_sub_size(vertex<Key, T> *v, int factor) {
@@ -192,6 +206,8 @@ public:
         if (v->left_son != nullptr && v->right_son != nullptr)
             fertile_vertex(v);
         update_path_sub_size(v, -1);
+        update_rank(v, -(*v->data), 0);
+        update_rank(v, -(*v->data), 1);
         remove_not_fertile(v);
         if (parent != nullptr)
             fix_balance_factor(parent);
@@ -284,7 +300,8 @@ public:
         if (temp->left_son != nullptr)
             templ_sub_size = temp->left_son->sub_size;
         temp->sub_size = 1 + templ_sub_size + temp->right_son->sub_size;
-
+        temp->rank_right_son += (*v->data + v->rank_right_son);
+        v->rank_left_son -= (*temp->data + temp->rank_left_son);
     }
 
     void RR_rotate(vertex<Key, T> *v) {
@@ -327,6 +344,8 @@ public:
         if (temp->right_son != nullptr)
             tempr_sub_size = temp->right_son->sub_size;
         temp->sub_size = 1 + tempr_sub_size + temp->left_son->sub_size;
+        v->rank_right_son -= (*temp->data + temp->rank_right_son);
+        temp->rank_left_son += (*v->data + v->rank_right_son);
     }
 
     void LR_rotate(vertex<Key, T> *v) {
@@ -389,6 +408,10 @@ public:
         a->sub_size = 1 + al_sub_size + ar_sub_size;
         c->sub_size = 1 + cl_sub_size + cr_sub_size;
         b->sub_size = 1 + b->right_son->sub_size + b->left_son->sub_size;
+        a->rank_right_son -= (*b->data + b->rank_right_son);
+        b->rank_right_son += (*c->data + c->rank_right_son);
+        c->rank_left_son -= (*a->data + a->rank_left_son + *b->data + b->rank_left_son);
+        b->rank_left_son += (*a->data + a->rank_left_son);
     }
 
     void RL_rotate(vertex<Key, T> *v) {
@@ -450,6 +473,10 @@ public:
         a->sub_size = 1 + al_sub_size + ar_sub_size;
         c->sub_size = 1 + cl_sub_size + cr_sub_size;
         b->sub_size = 1 + b->right_son->sub_size + b->left_son->sub_size;
+        c->rank_right_son -= (*b->data + b->rank_right_son + *a->data + a->rank_right_son);
+        b->rank_right_son += (*a->data + a->rank_right_son);
+        a->rank_left_son -= (*b->data + b->rank_left_son);
+        b->rank_left_son += (*c->data + c->rank_left_son);
     }
 
     ~AVLtree() {
