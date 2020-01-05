@@ -51,6 +51,12 @@ public:
             return Union(second, first);
         return first;
     }
+
+    ~UpTree() {
+        for (int i = 1; i < size; ++i)
+            delete parents[i];
+        delete[]parents;
+    }
 };
 
 #endif //UPTREE_H
