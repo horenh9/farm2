@@ -93,7 +93,7 @@ public:
         Node<T> *node = table[h(id)];
         while (node != nullptr) {
             if (node->id == id) {
-                Node<T> *temp = node;
+              //  Node<T> *temp = node;
                 if (node->prev != nullptr)
                     node->prev->next = node->next;
                 else {//if it's the list's head- update pointer in hash table

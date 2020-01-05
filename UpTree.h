@@ -30,10 +30,8 @@ public:
         if (a > size || a < 1)
             return -1;
         int temp1 = a;
-        while (parents[a]->key != a) {
-            int temp2 = a;
+        while (parents[a]->key != a)
             a = parents[a]->key;
-        }
         while (parents[temp1]->key != temp1) {
             int temp2 = temp1;
             temp1 = parents[temp1]->key;

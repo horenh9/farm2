@@ -31,6 +31,7 @@ Server &Server::operator=(const Server &other) {
     id = other.id;
     home = other.home;
     traffic = other.traffic;
+    return *this;
 }
 
 ////****************DataCenterManager**************////
