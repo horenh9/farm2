@@ -39,7 +39,7 @@ DataCenter::DataCenter(int id) : id(id), servers(0), root(this) {
 }
 
 DataCenterManager::DataCenterManager(int n) : num_farms(n), servers(0) {
-    DynamicHashTable<Server> *hash_Servers = new DynamicHashTable<Server>(STARTING_HASH);
+    hash_Servers = new DynamicHashTable<Server>(STARTING_HASH);
     all_servers_by_traffic = new AVLtree<Server, int>();
     farms = new UpTree<DataCenter>(n + 1);
     for (int i = 1; i <= n; ++i) {
@@ -257,15 +257,15 @@ StatusType DataCenterManager::SetTraffic(int serverID, int traffic) {
     vertex<Server, int> *temp1 = nullptr;
     vertex<Server, int> *temp2 = nullptr;
     if (server->traffic > 0) {
+        temp1 = get_vertex_by_ID(farm->servers_by_traffic->head, *server);
         farm->servers_by_traffic->remove_vertex(*server);
         farm->servers--;
-        temp1 = get_vertex_by_ID(farm->servers_by_traffic->head, *server);
-        all_servers_by_traffic->remove_vertex(*server);
         temp2 = get_vertex_by_ID(all_servers_by_traffic->head, *server);
+        all_servers_by_traffic->remove_vertex(*server);
         servers--;
     } else if (traffic != 0) {
-        temp1 = new vertex<Server, int>(*server, nullptr);
-        temp2 = new vertex<Server, int>(*server, nullptr);
+        temp1 = new vertex<Server, int>(*server, &server->traffic);
+        temp2 = new vertex<Server, int>(*server, &server->traffic);
     }
     server->traffic = traffic;
     if (traffic != 0) {
@@ -293,13 +293,13 @@ StatusType DataCenterManager::SumHighestTrafficServers(int dataCenterID, int k, 
         if (k > servers)
             k = servers;
         index = selectK(all_servers_by_traffic->head, servers - k + 1);
-        *traffic = sumK(index);
+        *traffic = *index->data + index->rank_right_son + sumK(index);
     } else {
         DataCenter *dataCenter = farms->parents[farms->Find(dataCenterID)]->data;
         if (k > dataCenter->servers)
             k = dataCenter->servers;
-        index = selectK(dataCenter->servers_by_traffic->head, servers - k + 1);
-        *traffic = sumK(index);
+        index = selectK(dataCenter->servers_by_traffic->head, dataCenter->servers - k + 1);
+        *traffic = *index->data + index->rank_right_son + sumK(index);
     }
     return SUCCESS;
 
@@ -322,13 +322,13 @@ vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
     if (vertex->left_son != nullptr)
         vl_size = vertex->left_son->sub_size;
     if (vertex->right_son != nullptr)
-        vr_size = vertex->left_son->sub_size;
+        vr_size = vertex->right_son->sub_size;
     if (vl_size == k - 1)
         return vertex;
     if (vr_size > k - 1)
         return selectK(vertex->left_son, k);
     else
-        return selectK(vertex->right_son, k - vertex->left_son->sub_size - 1);
+        return selectK(vertex->right_son, k - vl_size - 1);
 }
 
 int sumK(vertex<Server, int> *index) {
