@@ -1,8 +1,9 @@
 #include "DataCenterManager.h"
+#include <math.h>
 
 #define STARTING_HASH 11
 
-
+int pow(int num, int power);
 
 ////****************Server**************////
 
@@ -59,10 +60,6 @@ void mergeArray(Server **combined, Server **array1, Server **array2, int size1, 
 
 AVLtree<Server, int> *incompleteTree(int size);
 
-int logUp(int size);
-
-int pow(int num, int power);
-
 vertex<Server, int> *createAVL(int height);
 
 void removeLeaves(vertex<Server, int> *currHead, int *position, int k);
@@ -75,7 +72,7 @@ StatusType DataCenterManager::MergeDataCenters(int dataCenter1, int dataCenter2)
         return INVALID_INPUT;
     int root1 = farms->Find(dataCenter1);
     int root2 = farms->Find(dataCenter2);
-    if (farms->parents[root1]->size > farms->parents[root2]->size)
+    if (farms->parents[root1]->size >= farms->parents[root2]->size)
         mergeAVL(farms->parents[root1]->data, farms->parents[root2]->data);
     else
         mergeAVL(farms->parents[root2]->data, farms->parents[root1]->data);
@@ -97,6 +94,7 @@ void mergeAVL(DataCenter *dc1, DataCenter *dc2) {//putting dc2 avl in dc1 avl
     patrolled = 0;
     setArrayInAVL(combined->head, serversArrayTotal, &patrolled);
     dc1->servers_by_traffic = combined;
+    dc1->servers += dc2->servers;
     delete[]serversArray1;
     delete[]serversArray2;
     delete[]serversArrayTotal;
@@ -139,38 +137,32 @@ void mergeArray(Server **combined, Server **array1, Server **array2, int size1, 
 
 //creating an empty incomplete tree with "size" nodes
 AVLtree<Server, int> *incompleteTree(int size) {
-    int height = logUp(size);
+    int height = (int) floor(log2(size));
     AVLtree<Server, int> *servers = new AVLtree<Server, int>();
     servers->head = createAVL(height);
     int position = 0;
-    removeLeaves(servers->head, &position, (pow(2, height)) - size);
+    removeLeaves(servers->head, &position, (pow(2, height + 1) - 1) - size);
     return servers;
-}
-
-//getting the log of a number, the upper value.
-int logUp(int size) {
-    int counter = 1;
-    while (size > (pow(2, counter)) - 1)//לממש בחזקת
-        counter++;
-    return counter;
 }
 
 int pow(int num, int power) {
     int res = num;
-    for (int i = 0; i < power; ++i)
+    for (int i = 1; i < power; ++i)
         res *= num;
     return res;
 }
 
 //creating an empty complete tree
 vertex<Server, int> *createAVL(int height) {
+    vertex<Server, int> *curr = new vertex<Server, int>(Server(0, 0, nullptr), nullptr);
     if (height > 0) {
-        vertex<Server, int> *curr = new vertex<Server, int>(Server(0, 0, nullptr), nullptr);
         curr->left_son = createAVL(height - 1);
+        curr->left_son->parent = curr;
         curr->right_son = createAVL(height - 1);
+        curr->right_son->parent = curr;
         return curr;
-    }
-    return nullptr;
+    } else
+        return curr;
 }
 
 //removing k leafs from a complete tree and transforming him to an incomplete tree
@@ -180,6 +172,12 @@ void removeLeaves(vertex<Server, int> *currHead, int *position, int k) {
     if (*position < k) {
         removeLeaves(currHead->right_son, position, k);
         if (currHead->right_son == nullptr && currHead->left_son == nullptr) {
+            if (currHead->parent != nullptr) {
+                if (currHead->parent->right_son == currHead)
+                    currHead->parent->right_son = nullptr;
+                else
+                    currHead->parent->left_son = nullptr;
+            }
             delete currHead;
             (*position)++;
         } else
@@ -318,14 +316,12 @@ DataCenterManager::~DataCenterManager() {
 vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
     if (vertex == nullptr)
         return nullptr;
-    int vl_size = 0, vr_size = 0;
+    int vl_size = 0;
     if (vertex->left_son != nullptr)
         vl_size = vertex->left_son->sub_size;
-    if (vertex->right_son != nullptr)
-        vr_size = vertex->right_son->sub_size;
     if (vl_size == k - 1)
         return vertex;
-    if (vr_size > k - 1)
+    if (vl_size > k - 1)
         return selectK(vertex->left_son, k);
     else
         return selectK(vertex->right_son, k - vl_size - 1);

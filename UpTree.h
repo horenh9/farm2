@@ -9,7 +9,7 @@ public:
     T *parent;
     T *data;
 
-    UpVertex(int key, T *data) : key(key), size(0), parent(data), data(data) {}
+    UpVertex(int key, T *data) : key(key), size(1), parent(data), data(data) {}
 };
 
 template<class T>
