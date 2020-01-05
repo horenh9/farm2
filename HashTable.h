@@ -64,21 +64,15 @@ public:
         return item_id % size;
     }
 
-    int add(int id, const T *data) {
-        //assuming we have to check first if a server with this id already exists
-        if (find(id) != nullptr)//failure
-            return -1;
-
+    void add(int id, T *data) {
         if (add_to_table(table, id, data))
             non_empty++;
-
         if ((double(non_empty) / double(size)) >= EXPAND_FACTOR)
             expand();
-        return 1; //success
     }
 
     //returns true if non_empty++
-    bool add_to_table(Node<T> **curr_table, int id, const T *data) {
+    bool add_to_table(Node<T> **curr_table, int id, T *data) {
         bool is_new_filled = false;
 
         Node<T> *new_node = new Node<T>(id, data);
@@ -94,32 +88,26 @@ public:
         return is_new_filled;
     }
 
-    int remove(int id) {
-        //add shrinking
-        //assuming we have to check first if a server with this id exists
-        if (find(id) == nullptr)//failure
-            return -1;
+    void remove(int id) {
+
         Node<T> *node = table[h(id)];
         while (node != nullptr) {
             if (node->id == id) {
                 Node<T> *temp = node;
-                if (node->prev != nullptr) {
+                if (node->prev != nullptr)
                     node->prev->next = node->next;
-                } else {//if it's the list's head- update pointer in hash table
+                else {//if it's the list's head- update pointer in hash table
                     table[h(id)] = node->next;
                     if (table[h(id)] == nullptr)
                         non_empty--;
                 }
-                if (node->next != nullptr) {
+                if (node->next != nullptr)
                     node->next->prev = node->prev;
-                }
-                return 1;
             }
             node = node->next;
         }
-        if ((non_empty / size <= SHRINK_FACTOR) && size > MIN_SIZE)
+        if (((double(non_empty) / double(size)) <= SHRINK_FACTOR) && size > MIN_SIZE)
             shrink();
-        return -1;//shouldn't get here
     }
 
     void expand() {
@@ -128,7 +116,7 @@ public:
         non_empty = 0;
         insert_to_new_table(size / 2, new_table);
         delete_lists(size / 2, table);
-        Node<T> *temp = table;
+        Node<T> **temp = table;
         table = new_table;
         delete[] (temp);
     }
@@ -139,7 +127,7 @@ public:
         non_empty = 0;
         insert_to_new_table(size, new_table);
         delete_lists(size * 2, table);
-        Node<T> *temp = table;
+        Node<T> **temp = table;
         table = new_table;
         delete[] (temp);
     }

@@ -15,3 +15,6 @@ CMakeFiles/farm2.dir/library2.cpp.obj: ../UpTree.h
 CMakeFiles/farm2.dir/library2.cpp.obj: ../library2.cpp
 CMakeFiles/farm2.dir/library2.cpp.obj: ../library2.h
 
+CMakeFiles/farm2.dir/main2.cpp.obj: ../library2.h
+CMakeFiles/farm2.dir/main2.cpp.obj: ../main2.cpp
+

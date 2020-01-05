@@ -18,7 +18,8 @@ public:
     UpVertex<T> **parents;
     int size;
 
-     UpTree(int size) : size(size) {
+    UpTree(int size) : size(size) {
+        parents = new UpVertex<T> *[size];
         for (int i = 1; i <= size; ++i) {
             UpVertex<T> *vertex = new UpVertex<T>(i, nullptr);
             parents[i] = vertex;

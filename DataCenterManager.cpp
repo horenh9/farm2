@@ -192,17 +192,16 @@ void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position) {
     if (tree == nullptr)
         return;
     setArrayInAVL(tree->left_son, servers, position);
-    setArrayInAVL(tree->right_son, servers, position);
     tree->key = *servers[*position];
     tree->data = &tree->key.traffic;
     (*position)++;
+    setArrayInAVL(tree->right_son, servers, position);
     if (tree->left_son != nullptr)
         tree->rank_left_son = tree->left_son->rank_left_son + tree->left_son->rank_right_son + *tree->left_son->data;
     else
         tree->rank_left_son = 0;
     if (tree->right_son != nullptr)
-        tree->rank_right_son =
-                tree->right_son->rank_left_son + tree->right_son->rank_right_son + *tree->right_son->data;
+        tree->rank_right_son = tree->right_son->rank_left_son + tree->right_son->rank_right_son + *tree->right_son->data;
     else
         tree->rank_right_son = 0;
 }
@@ -241,6 +240,7 @@ StatusType DataCenterManager::RemoveServer(int serverID) {
         all_servers_by_traffic->remove_vertex(*server);
         delete temp2;
     }
+    hash_Servers->remove(serverID);
     delete server;
     return SUCCESS;
 }

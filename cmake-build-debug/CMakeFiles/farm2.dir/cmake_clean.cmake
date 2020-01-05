@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/farm2.dir/library2.cpp.obj"
   "CMakeFiles/farm2.dir/DataCenterManager.cpp.obj"
+  "CMakeFiles/farm2.dir/main2.cpp.obj"
   "farm2.pdb"
   "farm2.exe"
   "farm2.exe.manifest"

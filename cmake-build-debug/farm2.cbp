@@ -101,6 +101,9 @@
 		<Unit filename="C:/Users/Oren/CLionProjects/farm2/library2.h">
 			<Option target="farm2"/>
 		</Unit>
+		<Unit filename="C:/Users/Oren/CLionProjects/farm2/main2.cpp">
+			<Option target="farm2"/>
+		</Unit>
 		<Unit filename="C:/Users/Oren/CLionProjects/farm2/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
