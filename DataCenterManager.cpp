@@ -286,6 +286,7 @@ StatusType DataCenterManager::SetTraffic(int serverID, int traffic) {
             delete temp2;
         }
     }
+
     return SUCCESS;
 
 }
