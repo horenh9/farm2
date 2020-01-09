@@ -13,6 +13,8 @@ void *Init(int n) {
 }
 
 StatusType MergeDataCenters(void *DS, int dataCenter1, int dataCenter2) {
+    if(DS== nullptr)
+        return INVALID_INPUT;
     try {
         return ((DataCenterManager *) DS)->MergeDataCenters(dataCenter1, dataCenter2);
     }
@@ -22,6 +24,8 @@ StatusType MergeDataCenters(void *DS, int dataCenter1, int dataCenter2) {
 }
 
 StatusType AddServer(void *DS, int dataCenterID, int serverID) {
+    if(DS== nullptr)
+        return INVALID_INPUT;
     try {
         return ((DataCenterManager *) DS)->AddServer(dataCenterID, serverID);
     }
@@ -31,6 +35,8 @@ StatusType AddServer(void *DS, int dataCenterID, int serverID) {
 }
 
 StatusType RemoveServer(void *DS, int serverID){
+    if(DS== nullptr)
+        return INVALID_INPUT;
     try {
         return ((DataCenterManager *) DS)->RemoveServer(serverID);
     }
@@ -40,6 +46,8 @@ StatusType RemoveServer(void *DS, int serverID){
 }
 
 StatusType SetTraffic(void *DS, int serverID,  int traffic){
+    if(DS== nullptr)
+        return INVALID_INPUT;
     try {
         return ((DataCenterManager *) DS)->SetTraffic(serverID, traffic);
     }
@@ -49,6 +57,8 @@ StatusType SetTraffic(void *DS, int serverID,  int traffic){
 }
 
 StatusType SumHighestTrafficServers(void *DS, int dataCenterID,  int k, int *traffic){
+    if(DS== nullptr)
+        return INVALID_INPUT;
     try {
         return ((DataCenterManager *) DS)->SumHighestTrafficServers(dataCenterID, k, traffic);
     }

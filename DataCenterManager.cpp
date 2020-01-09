@@ -116,7 +116,7 @@ void mergeArray(Server **combined, Server **array1, Server **array2, int size1, 
     int position1 = 0, position2 = 0;
     for (int i = 0; i < size1 + size2; ++i) {
         if (position2 < size2 && position1 < size1) {
-            if (array1[position1] > array2[position2]) {
+            if (*(array1[position1]) > *(array2[position2])) {
                 combined[i] = array2[position2];
                 position2++;
             } else {
@@ -194,15 +194,19 @@ void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position) {
     tree->key = *servers[*position];
     tree->data = &tree->key.traffic;
     (*position)++;
+    int sub_left = 0, sub_right = 0;
     setArrayInAVL(tree->right_son, servers, position);
-    if (tree->left_son != nullptr)
+    if (tree->left_son != nullptr) {
         tree->rank_left_son = tree->left_son->rank_left_son + tree->left_son->rank_right_son + *tree->left_son->data;
-    else
+        sub_left = tree->left_son->sub_size;
+    } else
         tree->rank_left_son = 0;
-    if (tree->right_son != nullptr)
+    if (tree->right_son != nullptr) {
         tree->rank_right_son = tree->right_son->rank_left_son + tree->right_son->rank_right_son + *tree->right_son->data;
-    else
+        sub_right = tree->right_son->sub_size;
+    } else
         tree->rank_right_son = 0;
+    tree->sub_size = 1 + sub_left + sub_right;
 }
 
 ////           Others             ////
@@ -212,7 +216,7 @@ vertex<Server, int> *selectK(vertex<Server, int> *vertex, int i);
 int sumK(vertex<Server, int> *index);
 
 StatusType DataCenterManager::AddServer(int dataCenterID, int serverID) {
-    if (dataCenterID < 1 || dataCenterID > num_farms)
+    if (dataCenterID < 1 || dataCenterID > num_farms || serverID <= 0)
         return INVALID_INPUT;
     if (hash_Servers->find(serverID) != nullptr)
         return FAILURE;
@@ -223,7 +227,7 @@ StatusType DataCenterManager::AddServer(int dataCenterID, int serverID) {
 }
 
 StatusType DataCenterManager::RemoveServer(int serverID) {
-    if (serverID < 0)
+    if (serverID <= 0)
         return INVALID_INPUT;
     Node<Server> *temp = hash_Servers->find(serverID);
     if (temp == nullptr)
@@ -245,7 +249,7 @@ StatusType DataCenterManager::RemoveServer(int serverID) {
 }
 
 StatusType DataCenterManager::SetTraffic(int serverID, int traffic) {
-    if (serverID < 0 || traffic < 0)
+    if (serverID <= 0 || traffic < 0)
         return INVALID_INPUT;
     Node<Server> *temp = hash_Servers->find(serverID);
     if (temp == nullptr)
@@ -269,7 +273,9 @@ StatusType DataCenterManager::SetTraffic(int serverID, int traffic) {
     server->traffic = traffic;
     if (traffic != 0) {
         temp1->key.traffic = traffic;
+        temp1->data = &temp1->key.traffic;
         temp2->key.traffic = traffic;
+        temp2->data = &temp2->key.traffic;
         farm->servers_by_traffic->add_vertex(temp1);
         farm->servers++;
         all_servers_by_traffic->add_vertex(temp2);
@@ -331,8 +337,8 @@ vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
 int sumK(vertex<Server, int> *index) {
     if (index->parent == nullptr)
         return 0;
-    if (&(index->key) > &(index->parent->key))
-        return *(index->parent->data) + sumK(index->parent);
+    if ((index->key) < (index->parent->key))
+        return *(index->parent->data) + index->parent->rank_right_son + sumK(index->parent);
     else
         return sumK(index->parent);
 }

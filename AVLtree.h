@@ -75,7 +75,7 @@ public:
         v->height_left = 0;
         update_path_height(new_parent);
         //now check if balance factor is ok, and handle it if not
-        update_path_sub_size(v, 1);
+        update_path_sub_size(new_parent, 1);
         update_rank(v, *v->data, 0);
         update_rank(v, *v->data, 1);
         fix_balance_factor(v);
@@ -87,10 +87,12 @@ public:
     void update_rank(vertex<Key, T> *v, T factor, int side) {
         if (v->parent == nullptr)
             return;
-        if (!side) {//goes up from right son
-            if (v->data > v->parent->data)
-                v->parent->rank_right_son += factor;
-        } else//goes up from left son
+        //side = 0 - update right rank
+        //side = 1 - update left rank
+        if (!side && v->key > v->parent->key) {//goes up from right son
+            v->parent->rank_right_son += factor;
+        }
+        if (side && v->key < v->parent->key)//goes up from left son
             v->parent->rank_left_son += factor;
         update_rank(v->parent, factor, side);
     }
@@ -99,7 +101,7 @@ public:
         if (v == nullptr)
             return;;
         v->sub_size += factor;
-        update_path_height(v->parent);
+        update_path_sub_size(v->parent, factor);
     }
 
     vertex<Key, T> *find_a_parent(const vertex<Key, T> *v, vertex<Key, T> *r) const {
@@ -157,6 +159,17 @@ public:
             replace->right_son = v;
             v->parent = replace;
         }
+        int v_sub_size = v->sub_size;
+        v->sub_size = replace->sub_size;
+        replace->sub_size = v_sub_size;
+
+        int v_left_rank = v->rank_left_son;
+        int v_right_rank = v->rank_right_son;
+        v->rank_left_son = replace->rank_left_son;
+        v->rank_right_son = replace->rank_right_son;
+        replace->rank_left_son = v_left_rank;
+        replace->rank_right_son = v_right_rank - *replace->data + *v->data;
+
 
         update_path_height(replace_parent);
     }
@@ -221,7 +234,7 @@ public:
             if (v->right_son == nullptr)
                 return 0;
             else
-                return v->height_right;
+                return -(v->height_right);
         else
             return v->height_left - v->height_right;
     }
@@ -230,13 +243,13 @@ public:
         if (calc_bf(v) == 2) {
             if (calc_bf(v->left_son) == -1)
                 LR_rotate(v);
-            if (calc_bf(v->left_son) >= 0)
+            else if (calc_bf(v->left_son) >= 0)
                 LL_rotate(v);
         }
         if (calc_bf(v) == -2) {
             if (calc_bf(v->right_son) == 1)
                 RL_rotate(v);
-            if (calc_bf(v->left_son) <= 0)
+            else if (calc_bf(v->left_son) <= 0)
                 RR_rotate(v);
         }
 

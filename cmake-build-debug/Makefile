@@ -47,10 +47,10 @@ RM = "C:\Program Files\JetBrains\CLion 2018.3.4\bin\cmake\win\bin\cmake.exe" -E 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\Oren\CLionProjects\farm2
+CMAKE_SOURCE_DIR = C:\Users\sbach\CLionProjects\farm2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\Oren\CLionProjects\farm2\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\sbach\CLionProjects\farm2\cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -79,9 +79,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Oren\CLionProjects\farm2\cmake-build-debug\CMakeFiles C:\Users\Oren\CLionProjects\farm2\cmake-build-debug\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\sbach\CLionProjects\farm2\cmake-build-debug\CMakeFiles C:\Users\sbach\CLionProjects\farm2\cmake-build-debug\CMakeFiles\progress.marks
 	$(MAKE) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Oren\CLionProjects\farm2\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\sbach\CLionProjects\farm2\cmake-build-debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -176,32 +176,32 @@ library2.cpp.s:
 	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/library2.cpp.s
 .PHONY : library2.cpp.s
 
-main2.obj: main2.cpp.obj
+main.obj: main.cpp.obj
 
-.PHONY : main2.obj
+.PHONY : main.obj
 
 # target to build an object file
-main2.cpp.obj:
-	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/main2.cpp.obj
-.PHONY : main2.cpp.obj
+main.cpp.obj:
+	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/main.cpp.obj
+.PHONY : main.cpp.obj
 
-main2.i: main2.cpp.i
+main.i: main.cpp.i
 
-.PHONY : main2.i
+.PHONY : main.i
 
 # target to preprocess a source file
-main2.cpp.i:
-	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/main2.cpp.i
-.PHONY : main2.cpp.i
+main.cpp.i:
+	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/main.cpp.i
+.PHONY : main.cpp.i
 
-main2.s: main2.cpp.s
+main.s: main.cpp.s
 
-.PHONY : main2.s
+.PHONY : main.s
 
 # target to generate assembly for a file
-main2.cpp.s:
-	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/main2.cpp.s
-.PHONY : main2.cpp.s
+main.cpp.s:
+	$(MAKE) -f CMakeFiles\farm2.dir\build.make CMakeFiles/farm2.dir/main.cpp.s
+.PHONY : main.cpp.s
 
 # Help Target
 help:
@@ -218,9 +218,9 @@ help:
 	@echo ... library2.obj
 	@echo ... library2.i
 	@echo ... library2.s
-	@echo ... main2.obj
-	@echo ... main2.i
-	@echo ... main2.s
+	@echo ... main.obj
+	@echo ... main.i
+	@echo ... main.s
 .PHONY : help
 
 

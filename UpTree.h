@@ -5,7 +5,7 @@ template<class T>
 class UpVertex {
 public:
     int key;
-    int size;
+    int size;//size of co-farms, that go in the same up tree
     T *parent;
     T *data;
 
