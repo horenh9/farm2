@@ -225,6 +225,7 @@ public:
         if (parent != nullptr)
             fix_balance_factor(parent);
         return SUCCESS;
+
     }
 
     int calc_bf(vertex<Key, T> *v) {
