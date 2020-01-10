@@ -73,6 +73,7 @@ public:
         v->parent = new_parent;
         v->height_right = 0;
         v->height_left = 0;
+        v->sub_size = 1;
         update_path_height(new_parent);
         //now check if balance factor is ok, and handle it if not
         update_path_sub_size(new_parent, 1);
@@ -89,10 +90,10 @@ public:
             return;
         //side = 0 - update right rank
         //side = 1 - update left rank
-        if (!side && v->key > v->parent->key) {//goes up from right son
+        if (!side && v == v->parent->right_son) {//goes up from right son
             v->parent->rank_right_son += factor;
         }
-        if (side && v->key < v->parent->key)//goes up from left son
+        if (side && v == v->parent->left_son)//goes up from left son
             v->parent->rank_left_son += factor;
         update_rank(v->parent, factor, side);
     }
@@ -214,10 +215,9 @@ public:
         vertex<Key, T> *v = get_vertex_by_ID(head, id);
         if (v == nullptr)
             return FAILURE;
-        vertex<Key, T> *parent = v->parent;
-
         if (v->left_son != nullptr && v->right_son != nullptr)
             fertile_vertex(v);
+        vertex<Key, T> *parent = v->parent;
         update_path_sub_size(v, -1);
         update_rank(v, -(*v->data), 0);
         update_rank(v, -(*v->data), 1);

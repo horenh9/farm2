@@ -199,11 +199,13 @@ void setArrayInAVL(vertex<Server, int> *tree, Server **servers, int *position) {
     if (tree->left_son != nullptr) {
         tree->rank_left_son = tree->left_son->rank_left_son + tree->left_son->rank_right_son + *tree->left_son->data;
         sub_left = tree->left_son->sub_size;
+        tree->height_left = height(tree->left_son);
     } else
         tree->rank_left_son = 0;
     if (tree->right_son != nullptr) {
         tree->rank_right_son = tree->right_son->rank_left_son + tree->right_son->rank_right_son + *tree->right_son->data;
         sub_right = tree->right_son->sub_size;
+        tree->height_right = height(tree->right_son);
     } else
         tree->rank_right_son = 0;
     tree->sub_size = 1 + sub_left + sub_right;
@@ -296,15 +298,15 @@ StatusType DataCenterManager::SumHighestTrafficServers(int dataCenterID, int k, 
         return INVALID_INPUT;
     vertex<Server, int> *index = nullptr;
     if (dataCenterID == 0) {
-        if (k > servers)
-            k = servers;
-        index = selectK(all_servers_by_traffic->head, servers - k + 1);
+        if (k > all_servers_by_traffic->head->sub_size)
+            k = all_servers_by_traffic->head->sub_size;
+        index = selectK(all_servers_by_traffic->head, all_servers_by_traffic->head->sub_size - k + 1);
         *traffic = *index->data + index->rank_right_son + sumK(index);
     } else {
         DataCenter *dataCenter = farms->parents[farms->Find(dataCenterID)]->data;
-        if (k > dataCenter->servers)
-            k = dataCenter->servers;
-        index = selectK(dataCenter->servers_by_traffic->head, dataCenter->servers - k + 1);
+        if (k > dataCenter->servers_by_traffic->head->sub_size)
+            k = dataCenter->servers_by_traffic->head->sub_size;
+        index = selectK(dataCenter->servers_by_traffic->head, dataCenter->servers_by_traffic->head->sub_size - k + 1);
         *traffic = *index->data + index->rank_right_son + sumK(index);
     }
     return SUCCESS;

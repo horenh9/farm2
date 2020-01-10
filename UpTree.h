@@ -55,7 +55,6 @@ public:
     ~UpTree() {
         for (int i = 1; i < size; ++i)
             delete parents[i];
-        delete[]parents;
     }
 };
 
