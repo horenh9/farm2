@@ -28,8 +28,6 @@ public:
             delete left_son;
         if (right_son != nullptr)
             delete right_son;
-        if (data != nullptr)
-            delete data;
     }
 };
 
@@ -54,9 +52,7 @@ class AVLtree {
 public:
     vertex<Key, T> *head;
 
-    AVLtree() {
-        head = nullptr;
-    }
+    AVLtree():head(nullptr) {}
 
     StatusType add_vertex(vertex<Key, T> *v) {
         if (head == nullptr) {

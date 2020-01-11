@@ -40,10 +40,14 @@ DataCenter::DataCenter(int id) : id(id), servers(0), root(this) {
     servers_by_traffic = new AVLtree<Server, int>();
 }
 
+DataCenter::~DataCenter() {
+    delete servers_by_traffic;
+}
+
 DataCenterManager::DataCenterManager(int n) : num_farms(n), servers(0) {
     hash_Servers = new DynamicHashTable<Server>(STARTING_HASH);
     all_servers_by_traffic = new AVLtree<Server, int>();
-    farms = new UpTree<DataCenter>(n + 1);
+    farms = new UpTree<DataCenter>(n);
     for (int i = 1; i <= n; ++i) {
         DataCenter *farm = new DataCenter(i);
         UpVertex<DataCenter> *upVertex = new UpVertex<DataCenter>(i, farm);
@@ -94,6 +98,9 @@ void mergeAVL(DataCenter *dc1, DataCenter *dc2) {//putting dc2 avl in dc1 avl
     AVLtree<Server, int> *combined = incompleteTree(dc1->servers + dc2->servers);
     patrolled = 0;
     setArrayInAVL(combined->head, serversArrayTotal, &patrolled);
+    delete dc1->servers_by_traffic;
+    delete dc2->servers_by_traffic;
+    dc2->servers_by_traffic = nullptr;
     dc1->servers_by_traffic = combined;
     dc1->servers += dc2->servers;
     delete[]serversArray1;
@@ -246,6 +253,7 @@ StatusType DataCenterManager::RemoveServer(int serverID) {
         delete temp2;
     }
     hash_Servers->remove(serverID);
+    hash_Servers->table[serverID] = nullptr;
     delete server;
     return SUCCESS;
 }
@@ -258,7 +266,7 @@ StatusType DataCenterManager::SetTraffic(int serverID, int traffic) {
         return FAILURE;
     Server *server = temp->data;
     int dataCenterId = farms->Find(server->home->id);
-    DataCenter *farm = farms->parents[dataCenterId]->data;
+    DataCenter *farm = farms->parents[dataCenterId]->parent;
     vertex<Server, int> *temp1 = nullptr;
     vertex<Server, int> *temp2 = nullptr;
     if (server->traffic > 0) {
@@ -303,7 +311,7 @@ StatusType DataCenterManager::SumHighestTrafficServers(int dataCenterID, int k, 
         index = selectK(all_servers_by_traffic->head, all_servers_by_traffic->head->sub_size - k + 1);
         *traffic = *index->data + index->rank_right_son + sumK(index);
     } else {
-        DataCenter *dataCenter = farms->parents[farms->Find(dataCenterID)]->data;
+        DataCenter *dataCenter = farms->parents[farms->Find(dataCenterID)]->parent;
         if (k > dataCenter->servers_by_traffic->head->sub_size)
             k = dataCenter->servers_by_traffic->head->sub_size;
         index = selectK(dataCenter->servers_by_traffic->head, dataCenter->servers_by_traffic->head->sub_size - k + 1);
@@ -311,16 +319,6 @@ StatusType DataCenterManager::SumHighestTrafficServers(int dataCenterID, int k, 
     }
     return SUCCESS;
 
-}
-
-DataCenterManager::~DataCenterManager() {
-    for (int i = 1; i <= num_farms; ++i) {
-        delete farms->parents[i]->data;
-        delete farms->parents[i];
-    }
-    delete farms;
-    delete all_servers_by_traffic;
-    delete hash_Servers;
 }
 
 vertex<Server, int> *selectK(vertex<Server, int> *vertex, int k) {
@@ -346,10 +344,10 @@ int sumK(vertex<Server, int> *index) {
         return sumK(index->parent);
 }
 
-
-
-
-
-
-
-
+DataCenterManager::~DataCenterManager() {
+    for (int i = 1; i <=num_farms ; ++i)
+        delete farms->parents[i]->data;
+    delete farms;
+    delete all_servers_by_traffic;
+    delete hash_Servers;
+}

@@ -19,7 +19,7 @@ public:
     int size;
 
     UpTree(int size) : size(size) {
-        parents = new UpVertex<T> *[size];
+        parents = new UpVertex<T> *[size + 1];
         for (int i = 1; i <= size; ++i) {
             UpVertex<T> *vertex = new UpVertex<T>(i, nullptr);
             parents[i] = vertex;
@@ -44,17 +44,18 @@ public:
         if (first > size || second > size || first < 1 || second < 1)
             return -1;
         if (parents[first]->size >= parents[second]->size) {
-            parents[second] = parents[first];
             parents[first]->size += parents[second]->size;
             parents[second]->parent = parents[first]->parent;
+            parents[second]->key = parents[first]->key;
         } else
             return Union(second, first);
         return first;
     }
 
     ~UpTree() {
-        for (int i = 1; i < size; ++i)
+        for (int i = 1; i <= size; ++i)
             delete parents[i];
+        delete[] parents;
     }
 };
 
