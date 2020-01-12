@@ -304,6 +304,10 @@ StatusType DataCenterManager::SetTraffic(int serverID, int traffic) {
 StatusType DataCenterManager::SumHighestTrafficServers(int dataCenterID, int k, int *traffic) {
     if (dataCenterID < 0 || dataCenterID > num_farms || k < 0 || traffic == nullptr)
         return INVALID_INPUT;
+    if (k == 0) {
+        *traffic = 0;
+        return SUCCESS;
+    }
     vertex<Server, int> *index = nullptr;
     if (dataCenterID == 0) {
         if (k > all_servers_by_traffic->head->sub_size)
@@ -345,7 +349,7 @@ int sumK(vertex<Server, int> *index) {
 }
 
 DataCenterManager::~DataCenterManager() {
-    for (int i = 1; i <=num_farms ; ++i)
+    for (int i = 1; i <= num_farms; ++i)
         delete farms->parents[i]->data;
     delete farms;
     delete all_servers_by_traffic;
